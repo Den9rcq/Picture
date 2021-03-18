@@ -1,4 +1,4 @@
-// import checkNumInputs from "./checkNumInputs";
+import { postData } from '../services/requests';
 
 const forms = () => {
     const forms = document.querySelectorAll('form'),
@@ -17,16 +17,6 @@ const forms = () => {
             question: 'assets/question.php'
         };
 
-
-    // Функция получения данных с сервера
-    const postData = async (url, data) => {
-        const res = await fetch(url, {
-            method: "POST",
-            body: data,
-        });
-
-        return await res.text();
-    };
 
     // Функция очищения инпутов
     const clearInputs = () => {
