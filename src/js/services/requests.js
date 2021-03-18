@@ -1,4 +1,4 @@
-// Функция отправки данных с сервера
+// Функция отправки данных на сервера
 const postData = async (url, data) => {
     const res = await fetch(url, {
         method: "POST",
