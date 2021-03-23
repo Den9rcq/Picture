@@ -5,6 +5,7 @@ import modals from './modules/modals';
 import sliders from './modules/sliders';
 import showMoreStyles from './modules/showMoreStyles';
 import calc from './modules/calc';
+import filter from './modules/filter';
 
 window.addEventListener('DOMContentLoaded', () => {
     'use strict';
@@ -20,4 +21,5 @@ window.addEventListener('DOMContentLoaded', () => {
     chekTextInputs('[name="message"]');
     showMoreStyles('.button-styles', '#styles .row');
     calc('#size', '#material', '#options', '.promocode', '.calc-price', modalState);
+    filter();
 });
