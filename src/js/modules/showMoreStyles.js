@@ -21,8 +21,8 @@ const showMoreStyles = (trigger, wrapper) => {
 
     // ^ С json сервера
     btn.addEventListener('click', () => {
-        getResource('assets/db.json') //^  http://localhost:3000/styles
-            .then(res => createCards(res.styles)) //^ res
+        getResource('assets/db.json') //?  http://localhost:3000/styles
+            .then(res => createCards(res.styles)) //? res
             .cathch(error => console.log(error));
     });
 

@@ -1,4 +1,4 @@
-const calc = (size, material, options, promocode, result) => {
+const calc = (size, material, options, promocode, result, state) => {
     const sizeBlock = document.querySelector(size),
         materialBlock = document.querySelector(material),
         optionsBlock = document.querySelector(options),
@@ -13,9 +13,18 @@ const calc = (size, material, options, promocode, result) => {
             resultBlock.textContent = 'Выберите размер и материал картины';
         } else if (promocodeBlock.value === 'IWANTPOPART') {
             resultBlock.textContent = Math.round(sum * 0.7) + 'руб';
+            sum = Math.round(sum * 0.7);
         } else {
             resultBlock.textContent = sum + 'руб';
         }
+
+        // Сбор данных с формы
+        state.size = sizeBlock.value;
+        state.material = materialBlock.value;
+        state.options = optionsBlock.value;
+        state.promocode = promocodeBlock.value;
+        state.result = sum;
+        console.log(state);
     }
 
     sizeBlock.addEventListener('change', calcFunc);

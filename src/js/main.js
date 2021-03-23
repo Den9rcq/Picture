@@ -9,13 +9,15 @@ import calc from './modules/calc';
 window.addEventListener('DOMContentLoaded', () => {
     'use strict';
 
+    let modalState = {};
+
     modals();
     sliders('.feedback-slider-item', 'horizontal', '.main-prev-btn', '.main-next-btn');
     sliders('.main-slider-item', 'vertical');
-    forms();
+    forms(modalState);
     mask('[name="phone"]');
     chekTextInputs('[name="name"]');
     chekTextInputs('[name="message"]');
     showMoreStyles('.button-styles', '#styles .row');
-    calc('#size', '#material', '#options', '.promocode', '.calc-price');
+    calc('#size', '#material', '#options', '.promocode', '.calc-price', modalState);
 });
