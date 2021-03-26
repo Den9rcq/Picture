@@ -102,6 +102,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_sliders__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/sliders */ "./src/js/modules/sliders.js");
 /* harmony import */ var _modules_showMoreStyles__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/showMoreStyles */ "./src/js/modules/showMoreStyles.js");
 /* harmony import */ var _modules_calc__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/calc */ "./src/js/modules/calc.js");
+/* harmony import */ var _modules_filter__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/filter */ "./src/js/modules/filter.js");
+/* harmony import */ var _modules_pictureSize__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./modules/pictureSize */ "./src/js/modules/pictureSize.js");
+/* harmony import */ var _modules_accordion__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./modules/accordion */ "./src/js/modules/accordion.js");
+/* harmony import */ var _modules_burger__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./modules/burger */ "./src/js/modules/burger.js");
+
+
+
+
 
 
 
@@ -112,16 +120,107 @@ __webpack_require__.r(__webpack_exports__);
 window.addEventListener('DOMContentLoaded', () => {
   'use strict';
 
+  let modalState = {};
   Object(_modules_modals__WEBPACK_IMPORTED_MODULE_3__["default"])();
   Object(_modules_sliders__WEBPACK_IMPORTED_MODULE_4__["default"])('.feedback-slider-item', 'horizontal', '.main-prev-btn', '.main-next-btn');
   Object(_modules_sliders__WEBPACK_IMPORTED_MODULE_4__["default"])('.main-slider-item', 'vertical');
-  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_1__["default"])();
+  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_1__["default"])(modalState);
   Object(_modules_mask__WEBPACK_IMPORTED_MODULE_2__["default"])('[name="phone"]');
   Object(_modules_chekTextInputs__WEBPACK_IMPORTED_MODULE_0__["default"])('[name="name"]');
   Object(_modules_chekTextInputs__WEBPACK_IMPORTED_MODULE_0__["default"])('[name="message"]');
   Object(_modules_showMoreStyles__WEBPACK_IMPORTED_MODULE_5__["default"])('.button-styles', '#styles .row');
-  Object(_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])('#size', '#material', '#options', '.promocode', '.calc-price');
+  Object(_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])('#size', '#material', '#options', '.promocode', '.calc-price', modalState);
+  Object(_modules_filter__WEBPACK_IMPORTED_MODULE_7__["default"])();
+  Object(_modules_pictureSize__WEBPACK_IMPORTED_MODULE_8__["default"])('.sizes-block');
+  Object(_modules_accordion__WEBPACK_IMPORTED_MODULE_9__["default"])('.accordion-heading');
+  Object(_modules_burger__WEBPACK_IMPORTED_MODULE_10__["default"])('.burger-menu', '.burger');
 });
+
+/***/ }),
+
+/***/ "./src/js/modules/accordion.js":
+/*!*************************************!*\
+  !*** ./src/js/modules/accordion.js ***!
+  \*************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const accordion = triggersSelector => {
+  const btns = document.querySelectorAll(triggersSelector); // ~ JS
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', function () {
+      if (!this.classList.contains('active-style')) {
+        btns.forEach(btn => {
+          btn.classList.remove('active-style');
+          btn.nextElementSibling.classList.remove('active-content');
+          btn.nextElementSibling.style.maxHeight = "0px";
+        });
+      }
+
+      this.classList.toggle('active-style');
+      this.nextElementSibling.classList.toggle('active-content');
+
+      if (this.classList.contains('active-style')) {
+        this.nextElementSibling.style.maxHeight = this.nextElementSibling.scrollHeight + 80 + 'px';
+      } else {
+        this.nextElementSibling.style.maxHeight = '0px';
+      }
+    });
+  }); //     // ~ CSS Style
+  //         blocks = document.querySelectorAll(itemsSelector);
+  //     blocks.forEach(block => {
+  //         block.classList.add('animated', 'fadeInDown');
+  //     });
+  //     btns.forEach(btn => {
+  //         btn.addEventListener('click', function () {
+  //             if (!this.classList.contains('active')) {
+  //                 btns.forEach(btn => {
+  //                     btn.classList.remove('active', 'active-style');
+  //                 });
+  //                 this.classList.add('active', 'active-style');
+  //             } else {
+  //                 this.classList.remove('active', 'active-style');
+  //             }
+  //         });
+  //     });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (accordion);
+
+/***/ }),
+
+/***/ "./src/js/modules/burger.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/burger.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const burger = (menuSelector, burgerSelector) => {
+  const menuElem = document.querySelector(menuSelector),
+        burgerElem = document.querySelector(burgerSelector);
+  menuElem.style.display = 'none';
+  burgerElem.addEventListener('click', () => {
+    if (menuElem.style.display == 'none' && window.screen.availWidth < 993) {
+      menuElem.style.display = "block";
+    } else {
+      menuElem.style.display = 'none';
+    }
+  });
+  window.addEventListener('resize', () => {
+    //^ resize - изменение экрана
+    if (window.screen.availWidth > 992) {
+      menuElem.style.display = 'none';
+    }
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (burger);
 
 /***/ }),
 
@@ -134,7 +233,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-const calc = (size, material, options, promocode, result) => {
+const calc = (size, material, options, promocode, result, state) => {
   const sizeBlock = document.querySelector(size),
         materialBlock = document.querySelector(material),
         optionsBlock = document.querySelector(options),
@@ -149,9 +248,18 @@ const calc = (size, material, options, promocode, result) => {
       resultBlock.textContent = 'Выберите размер и материал картины';
     } else if (promocodeBlock.value === 'IWANTPOPART') {
       resultBlock.textContent = Math.round(sum * 0.7) + 'руб';
+      sum = Math.round(sum * 0.7);
     } else {
       resultBlock.textContent = sum + 'руб';
-    }
+    } // Сбор данных с формы
+
+
+    state.size = sizeBlock.value;
+    state.material = materialBlock.value;
+    state.options = optionsBlock.value;
+    state.promocode = promocodeBlock.value;
+    state.result = sum;
+    console.log(state);
   }
 
   sizeBlock.addEventListener('change', calcFunc);
@@ -188,6 +296,66 @@ const chekTextInputs = selector => {
 
 /***/ }),
 
+/***/ "./src/js/modules/filter.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/filter.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const filter = () => {
+  const menu = document.querySelector('.portfolio-menu'),
+        items = menu.querySelectorAll('li'),
+        wrapper = document.querySelector('.portfolio-wrapper'),
+        markAll = wrapper.querySelectorAll('.all'),
+        no = document.querySelector('.portfolio-no'); // Добавление у скрытие элементов со страницы
+
+  const typeFilter = markType => {
+    markAll.forEach(mark => {
+      mark.style.display = 'none';
+      mark.classList.remove('animated', 'fadeIn');
+    });
+    no.style.display = 'none';
+    no.classList.remove('animated', 'fadeIn'); // Показ элементов с одним классом
+
+    if (markType) {
+      markType.forEach(mark => {
+        mark.style.display = 'block';
+        mark.classList.add('animated', 'fadeIn');
+      });
+    } // Показ сообщения, если элементов на странице нет
+
+
+    if (markType.length == 0) {
+      no.style.display = 'block';
+      no.classList.add('animated', 'fadeIn');
+    }
+
+    console.log(markType.length);
+  };
+
+  menu.addEventListener('click', e => {
+    if (e.target && e.target.tagName == 'LI') {
+      // Удаление класса активности
+      items.forEach(item => item.classList.remove('active')); // Добавление таргету класс активности
+
+      e.target.classList.add('active'); // Назначаем в переменную первый класс элемента (e.target.classList вызывает DOMTokenList)
+
+      let classSelect = e.target.classList[0]; // Указываем класс поиска элементов
+
+      let allElems = wrapper.querySelectorAll(`.${classSelect}`); // Запускаем функцию с указаным классом
+
+      typeFilter(allElems);
+    }
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (filter);
+
+/***/ }),
+
 /***/ "./src/js/modules/forms.js":
 /*!*********************************!*\
   !*** ./src/js/modules/forms.js ***!
@@ -200,7 +368,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_requests__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/requests */ "./src/js/services/requests.js");
 
 
-const forms = () => {
+const forms = state => {
   const forms = document.querySelectorAll('form'),
         inputs = document.querySelectorAll('input'),
         upload = document.querySelectorAll('[name="upload"]'),
@@ -260,7 +428,14 @@ const forms = () => {
       let textMessage = document.createElement('div');
       textMessage.textContent = message.loading;
       statusMessage.appendChild(textMessage);
-      const formData = new FormData(item);
+      const formData = new FormData(item); // Помещение данных к форме со сбором данных
+
+      if (item.getAttribute('data-calc') === 'end') {
+        for (let key in state) {
+          formData.append(key, state[key]);
+        }
+      }
+
       let api;
       item.closest('.popup-design') || item.classList.contains('calc_form') ? api = path.designer : api = path.question;
       console.log(api);
@@ -467,6 +642,51 @@ const modals = () => {
 
 /***/ }),
 
+/***/ "./src/js/modules/pictureSize.js":
+/*!***************************************!*\
+  !*** ./src/js/modules/pictureSize.js ***!
+  \***************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const pictureSize = imgSelector => {
+  const blocks = document.querySelectorAll(imgSelector); // Показ картинки
+
+  function showImg(block) {
+    const img = block.querySelector('img');
+    block.classList.add('animated', 'fadeIn'); // ^  picture.png => picture-1.png
+
+    img.src = img.src.slice(0, -4) + '-1.png';
+    block.querySelectorAll('p:not(.sizes-hit)').forEach(p => {
+      //^ p:not(.class) - Кроме этого класса
+      p.style.display = 'none';
+    });
+  } // Скрытие картинки
+
+
+  function hideImg(block) {
+    const img = block.querySelector('img');
+    block.classList.remove('animated', 'fadeIn'); // ^  picture-1.png => picture.png
+
+    img.src = img.src.slice(0, -6) + '.png';
+    block.querySelectorAll('p:not(.sizes-hit)').forEach(p => {
+      //^ p:not(.class) - Кроме этого класса
+      p.style.display = 'block';
+    });
+  }
+
+  blocks.forEach(block => {
+    block.addEventListener('mouseover', () => showImg(block));
+    block.addEventListener('mouseout', () => hideImg(block));
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (pictureSize);
+
+/***/ }),
+
 /***/ "./src/js/modules/showMoreStyles.js":
 /*!******************************************!*\
   !*** ./src/js/modules/showMoreStyles.js ***!
@@ -494,8 +714,8 @@ const showMoreStyles = (trigger, wrapper) => {
   // ^ С json сервера
 
   btn.addEventListener('click', () => {
-    Object(_services_requests__WEBPACK_IMPORTED_MODULE_0__["getResource"])('assets/db.json') //^  http://localhost:3000/styles
-    .then(res => createCards(res.styles)) //^ res
+    Object(_services_requests__WEBPACK_IMPORTED_MODULE_0__["getResource"])('assets/db.json') //?  http://localhost:3000/styles
+    .then(res => createCards(res.styles)) //? res
     .cathch(error => console.log(error));
   });
 
