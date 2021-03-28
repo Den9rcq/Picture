@@ -107,6 +107,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_accordion__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./modules/accordion */ "./src/js/modules/accordion.js");
 /* harmony import */ var _modules_burger__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./modules/burger */ "./src/js/modules/burger.js");
 /* harmony import */ var _modules_scrolling__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./modules/scrolling */ "./src/js/modules/scrolling.js");
+/* harmony import */ var _modules_drop__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./modules/drop */ "./src/js/modules/drop.js");
+
 
 
 
@@ -137,6 +139,7 @@ window.addEventListener('DOMContentLoaded', () => {
   Object(_modules_accordion__WEBPACK_IMPORTED_MODULE_9__["default"])('.accordion-heading');
   Object(_modules_burger__WEBPACK_IMPORTED_MODULE_10__["default"])('.burger-menu', '.burger');
   Object(_modules_scrolling__WEBPACK_IMPORTED_MODULE_11__["default"])('.pageup');
+  Object(_modules_drop__WEBPACK_IMPORTED_MODULE_12__["default"])();
 });
 
 /***/ }),
@@ -296,6 +299,90 @@ const chekTextInputs = selector => {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (chekTextInputs);
+
+/***/ }),
+
+/***/ "./src/js/modules/drop.js":
+/*!********************************!*\
+  !*** ./src/js/modules/drop.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _services_requests__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/requests */ "./src/js/services/requests.js");
+// ? Документация по D&D https://developer.mozilla.org/ru/docs/Web/API/HTML_Drag_and_Drop_API
+// dragenter - объект над dropArea
+// dragleave - объект за пределами dropArea
+// dragover - объект зависает над dropArea
+// drop - объект отправлен в dropArea
+
+
+const drop = () => {
+  const fileInputs = document.querySelectorAll('[name="upload"]');
+  ['dragenter', 'dragleave', 'dragover', 'drop'].forEach(eventName => {
+    fileInputs.forEach(input => {
+      input.addEventListener(eventName, preventDefaults, false);
+    });
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault(); //^ Отменяем стандартное поведение браузера
+
+    e.stopPropagation(); //^ Остановка всплытия      
+  }
+
+  function highlight(item) {
+    item.closest('.file_upload').style.border = '1px solid yellow'; //^ closest - возвращает ближайший родительский элемент (или сам элемент)
+
+    item.closest('.file_upload').style.backgroundColor = "rgba(100,100,100, .7)";
+  }
+
+  function unHighlight(item) {
+    item.closest('.file_upload').style.border = 'none'; //^ closest - возвращает ближайший родительский элемент (или сам элемент)
+
+    item.closest('.file_upload').style.backgroundColor = ''; //^ Возвращаем старый бекграунд
+  }
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    fileInputs.forEach(input => {
+      input.addEventListener(eventName, () => highlight(input), false);
+    });
+  });
+  ['dragleave', 'drop'].forEach(eventName => {
+    fileInputs.forEach(input => {
+      input.addEventListener(eventName, () => unHighlight(input), false);
+    });
+  });
+  fileInputs.forEach(input => {
+    input.addEventListener('drop', e => {
+      input.files = e.dataTransfer.files; //^ Берём файлы и засовываем в инпут на страницу
+      // Отправка файла сразу на сервер
+
+      if (input.getAttribute('data-upload') === 'end') {
+        e.preventDefault();
+        e.stopPropagation();
+        let formData = new FormData();
+        [...input.files].forEach(file => {
+          formData.append('image', file);
+          Object(_services_requests__WEBPACK_IMPORTED_MODULE_0__["postData"])('assets/server.php', formData).then(res => {
+            console.log(res);
+          });
+        });
+      }
+
+      let dots;
+      const nameFile = input.files[0].name.split('.'); //^ 'name-file.jpg' => ['name-file', 'jpg']
+
+      nameFile[0].length > 5 ? dots = '...' : dots = '.';
+      const name = nameFile[0].substring(0, 5) + dots + nameFile[1];
+      input.previousElementSibling.textContent = name;
+    });
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (drop);
 
 /***/ }),
 
